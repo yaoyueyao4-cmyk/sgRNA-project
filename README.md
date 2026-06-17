@@ -21,21 +21,26 @@ The model architecture consists of two parallel branches that are concatenated b
 
 ### 1. Local Sequence Branch (Multi-Scale CNN)
 The input sequence is mapped from a discrete one-hot space to a continuous 16-dimensional embedding space. Three parallel 1D-CNNs capture distinct motif lengths:
-$$f_{local} = \text{Flatten} \left( \text{Pool}(\text{CNN}_3(E)) \parallel \text{Pool}(\text{CNN}_5(E)) \parallel \text{Pool}(\text{CNN}_7(E)) \right)$$
+
+$$f_{local}=\text{Flatten}(\text{Pool}(\text{CNN}_3(E))\parallel\text{Pool}(\text{CNN}_5(E))\parallel\text{Pool}(\text{CNN}_7(E)))$$
 
 ### 2. Global Semantic Branch (RNA-FM)
 The sequence is processed through the pre-trained RNA-FM model to extract 640-dimensional semantic features, which are then compressed via an information bottleneck:
-$$f_{global} = \text{Dropout} \left( \text{BatchNorm}(\text{Dense}_{64}(\text{RNA-FM}(S))) \right)$$
+
+$$f_{global}=\text{Dropout}(\text{BatchNorm}(\text{Dense}_{64}(\text{RNA-FM}(S))))$$
 
 ### 3. Fusion & Optimization
 The concatenated feature vector is passed through an MLP to yield the final predicted probability $\hat{y}$:
-$$\hat{y} = \sigma \left( \text{MLP} \left( [f_{local} \parallel f_{global}] \right) \right)$$
+
+$$\hat{y}=\sigma(\text{MLP}([f_{local}\parallel f_{global}]))$$
 
 The network is optimized using Binary Cross-Entropy (BCE) loss with $L_2$ regularization to prevent overfitting:
-$$\mathcal{L} = -\frac{1}{N} \sum_{i=1}^{N} \left[ y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \right] + \lambda ||W||_2^2$$
+
+$$\mathcal{L}=-\frac{1}{N}\sum_{i=1}^{N}[y_i\log(\hat{y}_i)+(1-y_i)\log(1-\hat{y}_i)]+\lambda||W||_2^2$$
 
 During inference, a soft-voting ensemble strategy is applied across $K=5$ models:
-$$P_{ensemble} = \frac{1}{K} \sum_{k=1}^{K} \hat{y}_k$$
+
+$$P_{ensemble}=\frac{1}{K}\sum_{k=1}^{K}\hat{y}_k$$
 
 ---
 
