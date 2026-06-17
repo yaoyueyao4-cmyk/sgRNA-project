@@ -15,7 +15,7 @@ CRISPR-FMC is a robust, dual-channel deep learning framework designed to predict
 
 ---
 
-## 📐 Model Architecture & Mathematical Formulation
+## 📐 Model Architecture
 
 The model architecture consists of two parallel branches that are concatenated before the final classification head. 
 
